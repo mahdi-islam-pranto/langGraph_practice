@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 # load_dotenv()
 
 llm = ChatOpenAI(model="gpt-4o-mini", api_key="")
+
 # define state
 class ChatState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
