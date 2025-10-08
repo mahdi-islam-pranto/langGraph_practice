@@ -1,6 +1,7 @@
 from langgraph.graph import StateGraph, START, END
 from typing import TypedDict, Annotated
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 # for add all messages to state
 from langgraph.graph.message import add_messages
@@ -9,7 +10,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from dotenv import load_dotenv
 # load_dotenv()
 
-llm = ChatOpenAI(model="gpt-4o-mini", api_key="")
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash",api_key="AIzaSyC8k0BJEofzDvH9pXmUCEsilPlSBSZmf5s")
 
 # define state
 class ChatState(TypedDict):

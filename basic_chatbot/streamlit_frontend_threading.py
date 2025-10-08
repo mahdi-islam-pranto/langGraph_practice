@@ -10,6 +10,12 @@ def generate_tread_id():
     thread_id = uuid.uuid4()
     return thread_id
 
+# reset message history with new thread_id
+def reset_chat():
+    thread_id = generate_tread_id()
+    st.session_state["thread_id"] = thread_id
+    st.session_state["message_history"] = []
+    
 
 ###################### Session state setup ######################
 # initialize message history in session state
@@ -30,7 +36,8 @@ if "thread_id" not in st.session_state:
 
 # sidebar UI
 st.sidebar.title("Your Conversations")
-st.sidebar.button("New Conversation")
+if st.sidebar.button("New Conversation"):
+    reset_chat()
 st.sidebar.text(st.session_state["thread_id"])
 
 
