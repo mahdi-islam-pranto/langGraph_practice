@@ -41,7 +41,9 @@ config = {'configurable': {"thread_id": thread_id}}
 
 # make the loop for the chatbot
 
-
+# response = chatbot.invoke({'messages': [SystemMessage(content="You are a helpful chatbot."),
+#                                         HumanMessage(content="Hello, my name is pranto")]}, config=config)
+# print(chatbot.get_state(config=config).values['messages'])
    
 
 # initial_state = {'messages': [SystemMessage(content="You are a helpful chatbot."),

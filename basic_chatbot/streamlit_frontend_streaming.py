@@ -27,7 +27,6 @@ if user_input:
     with st.chat_message('user'):
         st.text(user_input)
 
-
     thread_id = "1"
 
     config = {'configurable': {"thread_id": thread_id}}

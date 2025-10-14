@@ -41,3 +41,4 @@ if user_input:
     # show chatbot response in the chat interface
     with st.chat_message('assistant'):
         st.text(ai_response)
+        

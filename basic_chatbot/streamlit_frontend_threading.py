@@ -10,12 +10,23 @@ def generate_tread_id():
     thread_id = uuid.uuid4()
     return thread_id
 
-# reset message history with new thread_id
 def reset_chat():
     thread_id = generate_tread_id()
     st.session_state["thread_id"] = thread_id
+    add_thread_id_to_list(st.session_state["thread_id"])
     st.session_state["message_history"] = []
     
+# add thread_ id to thread_id_list
+def add_thread_id_to_list(thread_id):
+    # check if thread_id is already in the list
+    if thread_id not in st.session_state['thread_id_list']:
+        st.session_state['thread_id_list'].append(thread_id)
+
+# load all conversations from a thread_id to message_history
+def load_conversation_from_thread_id(tread_id):
+    state = chatbot.get_state(config={'configurable': {'thread_id': thread_id}})
+    # Check if messages key exists in state values, return empty list if not
+    return state.values.get('messages', [])
 
 ###################### Session state setup ######################
 # initialize message history in session state
@@ -25,6 +36,12 @@ if "message_history" not in st.session_state:
 # initialize thread_id in session state
 if "thread_id" not in st.session_state:
     st.session_state["thread_id"] = generate_tread_id()
+
+# initialize a list of all thread_ids in session state
+if "thread_id_list" not in st.session_state:
+    st.session_state["thread_id_list"] = []
+
+add_thread_id_to_list(st.session_state['thread_id'])
 
 # sample message history
 # st.session_state["message_history"] = [
@@ -36,10 +53,29 @@ if "thread_id" not in st.session_state:
 
 # sidebar UI
 st.sidebar.title("Your Conversations")
-if st.sidebar.button("New Conversation"):
+if st.sidebar.button("New Conversation", type="primary"):
     reset_chat()
-st.sidebar.text(st.session_state["thread_id"])
 
+# show all thread_ids in the sidebar
+for thread_id in st.session_state["thread_id_list"][::-1]:
+    if st.sidebar.button(str(thread_id)):
+        st.session_state["thread_id"] = thread_id
+        messages = load_conversation_from_thread_id(thread_id)
+
+        # convert messages to the format that streamlit can understand
+        temp_messages = []
+
+        for msg in messages:
+            if isinstance(msg, HumanMessage):
+                role='user'
+            else:
+                role='assistant'
+            temp_messages.append({'role': role, 'content': msg.content})
+
+        st.session_state['message_history'] = temp_messages
+        
+
+    
 
 ##################### Main UI ######################
 st.title("Ask me anything")
@@ -57,7 +93,6 @@ if user_input:
     with st.chat_message('user'):
         st.text(user_input)
 
-
     thread_id = st.session_state["thread_id"]
 
     CONFIG = {'configurable': {"thread_id": thread_id}}
@@ -68,14 +103,12 @@ if user_input:
     # ai_response = response['messages'][-1].content
 
     
-    
     # show chatbot response in the chat interface
     with st.chat_message('assistant'):
         ai_response = st.write_stream(
-            message_chunk.content for message_chunk, metadata in chatbot.stream({"messages": [SystemMessage(content="You are a helpful chatbot."),
+            message_chunk.content for message_chunk, metadata in chatbot.stream({"messages": [
                               HumanMessage(content=user_input)]}, config=CONFIG, stream_mode='messages' )
         )
 
-        # put ai response in the message history
+    # put ai response in the message history
     st.session_state["message_history"].append({"role": "assistant", "content": ai_response})
-        
