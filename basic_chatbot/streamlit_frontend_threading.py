@@ -10,6 +10,7 @@ def generate_tread_id():
     thread_id = uuid.uuid4()
     return thread_id
 
+# reset chat history
 def reset_chat():
     thread_id = generate_tread_id()
     st.session_state["thread_id"] = thread_id
@@ -56,9 +57,16 @@ st.sidebar.title("Your Conversations")
 if st.sidebar.button("New Conversation", type="primary"):
     reset_chat()
 
-# show all thread_ids in the sidebar
+# show all thread_ids in the sidebar 
 for thread_id in st.session_state["thread_id_list"][::-1]:
-    if st.sidebar.button(str(thread_id)):
+    # show a part of message to show as a button
+    messages = load_conversation_from_thread_id(thread_id)
+    # get first message from messages
+    first_message = messages[0].content if messages else "New Chat"
+    if len(first_message) > 50:
+        first_message = first_message[:50] + "..."
+
+    if st.sidebar.button(first_message):
         st.session_state["thread_id"] = thread_id
         messages = load_conversation_from_thread_id(thread_id)
 
