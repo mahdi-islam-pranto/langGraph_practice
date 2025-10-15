@@ -78,10 +78,10 @@ thread_id = "thread_id_1"
 config = {'configurable': {"thread_id": thread_id}}
 
 
-# check chatbot memory working
-response = chatbot.invoke({"messages": [HumanMessage(content="I am a laravel developer. What jobs are available for me?")]}, config=config)
+# check chatbot with tools working
+# response = chatbot.invoke({"messages": [HumanMessage(content="I am a laravel developer. What jobs are available for me?")]}, config=config)
 
-print(response['messages'][-1].content)
+# print(response['messages'][-1].content)
 
 # get all the thread_ids from the database checkpointer
 def retrieve_all_threads():
